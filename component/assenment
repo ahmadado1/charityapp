@@ -1,0 +1,52 @@
+
+
+
+
+
+
+// <View style={ass.back}>
+//         <View style={styles.wrapper}>
+//         <View style={ass.math}>
+//           <Image source={require('./assets/charityapp.png')}
+//           alt="logo"
+//           style={ass.image}/>
+//           <Text style={ass.title}>Charity App</Text>
+//           <View>
+//             <TouchableOpacity>
+//             <FontAwesomeIcon icon={faUser}
+//            color='#5C469C' size={36}/></TouchableOpacity>
+//           </View>
+//         </View>
+          
+//       </View>
+//           <View style={ass.second}>
+//             <Text style={ass.textUnder}>Development servers</Text>
+//             <TouchableOpacity>
+//             <Text style={ass.help}>HELP</Text>
+//             </TouchableOpacity>
+//           </View>
+//           <View style={ass.textview}>
+//             <View style={ass.line2}>
+//             <Text style={ass.text}>Sara is the first sentence search
+//                engine that helps you write better English
+//                 by text.</Text></View>
+//                 <View style={ass.line}>
+//                   <TouchableOpacity>
+//                 <Text style={ass.text2}>ENTER URL manually</Text>
+//                 </TouchableOpacity>
+//                 </View>
+//                 <View style={ass.scan}>
+//                   <Image source={require('./assets/qr-code.png')}
+//                   alt="app logo"
+//                   style={ass.style}/>
+//                   <TouchableOpacity>
+//                   <Text style={ass.scan1}>Scan OR code</Text>
+//                   </TouchableOpacity>
+//                 </View>
+//                 <View style={ass.email}>
+//                   <TextInput
+//                   />
+//                 </View>
+//           </View>
+//           </View>
+ 
