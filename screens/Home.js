@@ -14,8 +14,17 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
 import { SafeArea } from "../component/SafeArea";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Donate } from "./Donate";
+import { About } from "./About";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Theme } from "../Utils/theme";
 
-  export  function Home () {
+
+const Tab = createBottomTabNavigator()
+
+
+function Home () {
     const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -107,6 +116,36 @@ import { SafeArea } from "../component/SafeArea";
     )
   }
 
+  export function MyHome(){
+    return(
+      <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+
+              if (route.name === 'Home') {
+                iconName = focused
+                  ? 'home-sharp'
+                  : 'home-outline';
+                  } else if (route.name === 'Donate') {
+                    iconName = focused ? 'heart-circle-outline' : 'heart-circle-outline';
+                  } else if (route.name === 'About') {
+                    iconName = focused ? 'information-circle' : 'information-circle-outline';
+                  }
+
+                    // You can return any component that you like here!
+                    return <Ionicons name={iconName} size={size} color={color} />;
+                  },
+                  tabBarActiveTintColor: Theme.colors.purple300,
+                  tabBarInactiveTintColor: 'gray',
+                })}
+              >
+            <Tab.Screen name="Home" component={Home} options={{headerShown:false}}/>
+          <Tab.Screen name="Donate" component={Donate} options={{headerShown:false}}/>
+          <Tab.Screen name="About" component={About} options={{headerShown:false}}/>
+      </Tab.Navigator>
+    )
+  }
 const styles = StyleSheet.create({
   
   make:{

@@ -1,9 +1,10 @@
-import { Home } from "./screens/Home"
-import { Login } from "./screens/Login"
+import { NavigationContainer } from "@react-navigation/native"
+import { StackNavigation } from "./screens/StackNavigation"
+
 export default function App () {
   return(
-    <>
-    <Login/>
-    </>
+    <NavigationContainer>
+      <StackNavigation/>
+    </NavigationContainer>
   )
 }

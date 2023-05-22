@@ -6,7 +6,7 @@ import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
 import { useState,useEffect,useCallback } from "react";
 import { TextInput,Button } from 'react-native-paper';
 
-export function Login ({navigation}) {
+export function Signup () {
     const [appIsReady, setAppIsReady] = useState(false);
     const [text, setText] = useState("");
     const [number, setNumber] = useState("");
@@ -42,7 +42,7 @@ export function Login ({navigation}) {
         <SafeArea>
             <View style={style.heding}>
                 <Text style={style.title}>Charity App</Text>
-                <Text style={style.title2}>Login to your Charity App account</Text>
+                <Text style={style.title2}>Creat a donator account</Text>
                 <TextInput
                     style={style.input}
                     label="Email"
@@ -58,15 +58,25 @@ export function Login ({navigation}) {
                     secureTextEntry={true}
                     onChangeText={number => setNumber(number)}
                 />
+                
+                <TextInput
+                    style={style.input}
+                    label="Confirm Password"
+                    mode="outlined"
+                    value={number}
+                    secureTextEntry={true}
+                    onChangeText={number => setNumber(number)}
+                />
                   <View style={style.button}>
                       <Button mode="contained" onPress={() => console.log('Login')}>
-                      Login
+                      Sign Up
                       </Button>
                           </View>
-                          <View style={style.account}>
-                          <Text >Don't have an account? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-                    <Text style={style.sign}>Sign up</Text></TouchableOpacity>
+                           <View style={style.account}>
+                            <Text >Already have an account? </Text>
+                    <TouchableOpacity>
+                        <Text style={style.sign}>Sign in</Text>
+                    </TouchableOpacity>
                     
                     </View>
               </View>
