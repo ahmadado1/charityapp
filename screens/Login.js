@@ -59,11 +59,7 @@ export function Login ({navigation}) {
                     onChangeText={number => setNumber(number)}
                 />
                   <View style={style.button}>
-                      <Button mode="contained" onPress={() => navigation.navigate('My Home',{
-                        firstName:'Ahmad',
-                        class:'official',
-                        number:'1234'
-                      })}>
+                      <Button mode="contained" onPress={() => navigation.navigate('Donate')}>
                       Login
                       </Button>
                           </View>
