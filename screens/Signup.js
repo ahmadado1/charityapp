@@ -1,91 +1,127 @@
-import { View,TouchableOpacity,Text,StyleSheet,} from "react-native";
+import { View,TouchableOpacity,Text,StyleSheet,Alert} from "react-native";
 import { SafeArea } from "../component/SafeArea";
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
 import { useState,useEffect,useCallback } from "react";
 import { TextInput,Button } from 'react-native-paper';
+import { Formik } from 'formik';
+import * as yup from 'yup';
+import { auth } from "../Settings/Firebase.setting";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-export function Signup () {
-    const [appIsReady, setAppIsReady] = useState(false);
-    const [text, setText] = useState("");
-    const [number, setNumber] = useState("");
+const validationRules = yup.object({
+  email:yup.string().required('you must fill this field').min(5).max(36),
+  password:yup.string().required().min(4)
+  .oneOf([yup.ref('passwordConfirmation'),null],'password must match')
+  
+});
 
-    useEffect(() => {
+export function Signup ({navigation}) {
+  const [appIsReady, setAppIsReady] = useState(false);
 
-        async function prepare() {
-          try {
-            await Font.loadAsync({Pacifico_400Regular});
-            await new Promise(resolve => setTimeout(resolve, 2000));
-          } catch (e) {
-            console.warn(e);
-          } finally {
-            setAppIsReady(true);
-          }
-        }
-    
-        prepare();
-      }, []);
-    
-      const onLayoutRootView = useCallback(async () => {
-        if (appIsReady) {
-          await SplashScreen.hideAsync();
-        }
-      }, [appIsReady]);
-    
-      if (!appIsReady) {
-        return null;
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await Font.loadAsync({Pacifico_400Regular});
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
       }
+    }
+  
+    prepare();
+  }, []);
     
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
 
-    return(
-        <SafeArea>
-            <View style={style.heding}>
-                <Text style={style.title}>Charity App</Text>
-                <Text style={style.title2}>Creat a donator account</Text>
+  if (!appIsReady) {
+    return null;
+  }
+
+return(
+  <SafeArea>
+    <View style={style.heading}>
+      <Text style={style.title}>Charity App</Text>
+      <Text style={style.title2}>Create a donator account</Text>
+      
+      <Formik
+        initialValues={{ email: '',password:'',passwordConfirmation:'' }}
+        onSubmit={(values,action) => {
+          createUserWithEmailAndPassword(auth,values.email,values.password)
+          .then(() => {
+            Alert.alert('Notify','Account creation succesfull',
+            [{text:'Go to Home',onPress:() => navigation.navigate('My Home')}])
+          }).catch(error => console.log(error)) 
+        }}
+        validationSchema={validationRules}
+      >
+          {({ handleChange, handleBlur, handleSubmit, values,errors,touched }) => (
+            <View>
+              <View>
                 <TextInput
-                    style={style.input}
-                    label="Email"
-                    mode="outlined"
-                    value={text}
-                    onChangeText={text => setText(text)}
+                  mode="outlined"
+                  label='email'
+                  style={style.input}
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
                 />
-                <TextInput
-                    style={style.input}
-                    label="Password"
-                    mode="outlined"
-                    value={number}
-                    secureTextEntry={true}
-                    onChangeText={number => setNumber(number)}
-                />
-                
-                <TextInput
-                    style={style.input}
-                    label="Confirm Password"
-                    mode="outlined"
-                    value={number}
-                    secureTextEntry={true}
-                    onChangeText={number => setNumber(number)}
-                />
-                  <View style={style.button}>
-                      <Button mode="contained" onPress={() => console.log('Login')}>
-                      Sign Up
-                      </Button>
-                          </View>
-                           <View style={style.account}>
-                            <Text >Already have an account? </Text>
-                    <TouchableOpacity>
-                        <Text style={style.sign}>Sign in</Text>
-                    </TouchableOpacity>
-                    
-                    </View>
+                {touched.email && errors.email 
+                ? <Text style={{color:'red'}}>{errors.email}</Text> 
+                : null}
               </View>
-          </SafeArea>
-    )
+
+              <View>
+              <TextInput
+                mode="outlined"
+                label='password'
+                style={style.input}
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                value={values.password}
+                secureTextEntry={true}
+              />
+               {touched.password && errors.password
+                ? <Text style={{color:'red'}}>{errors.password}</Text> 
+                : null}
+              </View>
+              <TextInput
+                mode="outlined"
+                label='confirm password'
+                style={style.input}
+                onChangeText={handleChange('passwordConfirmation')}
+                onBlur={handleBlur('passwordConfirmation')}
+                value={values.passwordConfirmation}
+                secureTextEntry={true}
+              />
+              <Button 
+              mode="contained"
+              onPress={handleSubmit}
+              contentStyle={{paddingVertical:6}}
+              style={{marginVertical:12}}>Create account</Button>
+            </View>
+          )}
+        </Formik>
+        <View style={style.account}>
+            <Text >Already have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={style.sign}>Sign in</Text>
+            </TouchableOpacity>
+        </View>
+      </View>
+    </SafeArea>
+  )
 }
 
 const style = StyleSheet.create({
-    heding:{ 
+    heading:{ 
         flex:1,
         alignItems:'center',
         justifyContent:'center',
@@ -100,18 +136,15 @@ const style = StyleSheet.create({
     },
     input:{
         marginTop:15,
-        width:300
-    },
-    button:{
-      marginTop:20,
-      width:300,
-      height:70
+        width:300,
     },
     account:{
       flexDirection:'row'
     },
     sign:{
-      
       color:'blue'
     },
 })
+
+//validation:a set rules for controlling form inputs
+//height 

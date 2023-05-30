@@ -20,6 +20,7 @@ import { Donate } from "./Donate";
 import { About } from "./About";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Theme } from "../Utils/theme";
+import { Formik } from "formik";
 
 
 const Tab = createBottomTabNavigator()

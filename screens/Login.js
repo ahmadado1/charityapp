@@ -5,6 +5,15 @@ import * as Font from 'expo-font';
 import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
 import { useState,useEffect,useCallback } from "react";
 import { TextInput,Button } from 'react-native-paper';
+import { Formik } from "formik";
+import * as yup from 'yup';
+
+const validationRules = yup.object({
+  email:yup.string().required('you must fill this field').min(5).max(36),
+  password:yup.string().required().min(4)
+  .oneOf([yup.ref('passwordConfirmation'),null],'password must match')
+  
+});
 
 export function Login ({navigation}) {
     const [appIsReady, setAppIsReady] = useState(false);
@@ -43,26 +52,53 @@ export function Login ({navigation}) {
             <View style={style.heding}>
                 <Text style={style.title}>Charity App</Text>
                 <Text style={style.title2}>Login to your Charity App account</Text>
-                <TextInput
-                    style={style.input}
-                    label="Email"
-                    mode="outlined"
-                    value={text}
-                    onChangeText={text => setText(text)}
-                />
-                <TextInput
-                    style={style.input}
-                    label="Password"
-                    mode="outlined"
-                    value={number}
-                    secureTextEntry={true}
-                    onChangeText={number => setNumber(number)}
-                />
-                  <View style={style.button}>
-                      <Button mode="contained" onPress={() => navigation.navigate('Donate')}>
-                      Login
-                      </Button>
-                          </View>
+               <Formik
+                        initialValues={{ email: '',password:'',passwordConfirmation:'' }}
+                        onSubmit={(values,action) => {
+                          console.log(values.email)
+                        }}
+                        validationSchema={validationRules}
+                      >
+                          {({ handleChange, handleBlur, handleSubmit, values,errors,touched }) => (
+                            <View>
+                              <View>
+                                <TextInput
+                                  mode="outlined"
+                                  label='email'
+                                  style={style.input}
+                                  onChangeText={handleChange('email')}
+                                  onBlur={handleBlur('email')}
+                        value={values.email}
+                      />
+                      {touched.email && errors.email 
+                      ? <Text style={{color:'red'}}>{errors.email}</Text> 
+                      : null}
+                      </View>
+
+                      <View>
+                      <TextInput
+                        mode="outlined"
+                        label='password'
+                        style={style.input}
+                        onChangeText={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        value={values.password}
+                        secureTextEntry={true}
+                      />
+                      {touched.password && errors.password
+                        ? <Text style={{color:'red'}}>{errors.password}</Text> 
+                        : null}
+                      </View>
+                    
+                      <Button 
+                      mode="contained"
+                      onPress={handleSubmit}
+                      contentStyle={{paddingVertical:6}}
+                      style={{marginVertical:12}}>Create account</Button>
+                    </View>
+                  )}
+              </Formik>
+                  
                           <View style={style.account}>
                           <Text >Don't have an account? </Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
