@@ -1,24 +1,27 @@
-import { View,TouchableOpacity,Text,StyleSheet,} from "react-native";
+import { View,TouchableOpacity,Text,StyleSheet, Alert,} from "react-native";
 import { SafeArea } from "../component/SafeArea";
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
-import { useState,useEffect,useCallback } from "react";
+import { useState,useEffect,useCallback,useContext } from "react";
+import { AppContext } from "../Settings/globalVariables";
 import { TextInput,Button } from 'react-native-paper';
 import { Formik } from "formik";
 import * as yup from 'yup';
+import { auth } from "../Settings/Firebase.setting";
+import { signInWithEmailAndPassword,onAuthStateChanged} from "firebase/auth";
 
 const validationRules = yup.object({
   email:yup.string().required('you must fill this field').min(5).max(36),
   password:yup.string().required().min(4)
-  .oneOf([yup.ref('passwordConfirmation'),null],'password must match')
+  // .oneOf([yup.ref('passwordConfirmation'),null],'password must match')
   
 });
 
 export function Login ({navigation}) {
+  const {setUid} = useContext(AppContext);
     const [appIsReady, setAppIsReady] = useState(false);
-    const [text, setText] = useState("");
-    const [number, setNumber] = useState("");
+  
 
     useEffect(() => {
 
@@ -52,52 +55,72 @@ export function Login ({navigation}) {
             <View style={style.heding}>
                 <Text style={style.title}>Charity App</Text>
                 <Text style={style.title2}>Login to your Charity App account</Text>
-               <Formik
-                        initialValues={{ email: '',password:'',passwordConfirmation:'' }}
-                        onSubmit={(values,action) => {
-                          console.log(values.email)
-                        }}
-                        validationSchema={validationRules}
-                      >
-                          {({ handleChange, handleBlur, handleSubmit, values,errors,touched }) => (
-                            <View>
-                              <View>
-                                <TextInput
-                                  mode="outlined"
-                                  label='email'
-                                  style={style.input}
-                                  onChangeText={handleChange('email')}
-                                  onBlur={handleBlur('email')}
-                        value={values.email}
-                      />
-                      {touched.email && errors.email 
-                      ? <Text style={{color:'red'}}>{errors.email}</Text> 
-                      : null}
-                      </View>
+                <Formik
+        initialValues={{ email: '',password:'',passwordConfirmation:'' }}
+        onSubmit={(values,action) => {
+          signInWithEmailAndPassword(auth,values.email,values.password)
+          .then(() => onAuthStateChanged(auth,(user) => {
+            setUid(user.uid)
+            navigation.navigate('My Home')
+          }))
+          .catch((error) => {
+            //custom action for defferent errors
+            if (error.code == 'auth/invalid-email'){
+              Alert.alert('Message','Invalid email! ',[
+                {text:'Try again',},
+              ])
+            }else if (error.code == 'auth/wrong-password' || error.code == 'auth/user-not-found'){
+              Alert.alert('Message','Incorrect email or password',[
+                {text:'Try again',},
+               ])
+            }else{
+              Alert.alert('Message','Something went wrong ',[
+                {text:'Try again',},
+              ])
+            }
+          });
+        }}
+        validationSchema={validationRules}
+      >
+          {({ handleChange, handleBlur, handleSubmit, values,errors,touched }) => (
+            <View>
+              <View>
+                <TextInput
+                  mode="outlined"
+                  label='email'
+                  style={style.input}
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                />
+                {touched.email && errors.email 
+                ? <Text style={{color:'red'}}>{errors.email}</Text> 
+                : null}
+              </View>
 
-                      <View>
-                      <TextInput
-                        mode="outlined"
-                        label='password'
-                        style={style.input}
-                        onChangeText={handleChange('password')}
-                        onBlur={handleBlur('password')}
-                        value={values.password}
-                        secureTextEntry={true}
-                      />
-                      {touched.password && errors.password
-                        ? <Text style={{color:'red'}}>{errors.password}</Text> 
-                        : null}
-                      </View>
-                    
-                      <Button 
-                      mode="contained"
-                      onPress={handleSubmit}
-                      contentStyle={{paddingVertical:6}}
-                      style={{marginVertical:12}}>Create account</Button>
-                    </View>
-                  )}
-              </Formik>
+              <View>
+              <TextInput
+                mode="outlined"
+                label='password'
+                style={style.input}
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                value={values.password}
+                secureTextEntry={true}
+              />
+               {touched.password && errors.password
+                ? <Text style={{color:'red'}}>{errors.password}</Text> 
+                : null}
+              </View>
+             
+              <Button 
+              mode="contained"
+              onPress={handleSubmit}
+              contentStyle={{paddingVertical:6}}
+              style={{marginVertical:12}}>Create account</Button>
+            </View>
+          )}
+        </Formik>
                   
                           <View style={style.account}>
                           <Text >Don't have an account? </Text>

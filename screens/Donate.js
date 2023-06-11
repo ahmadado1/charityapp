@@ -10,20 +10,7 @@ export function Donate () {
     console.log(Uid);
     return(
         <SafeArea>
-            <View style={styles.view}>
-             <Image source={require('../assets/hand.jpg')}
-             style={styles.pic}/>
-              <Text style={styles.text}> Donate to sport</Text>
-              
-              <Text style={styles.vat}>Help to Raise $500 now</Text>
-              
-            </View>
-            <View style={styles.button}>
-            <Button  mode="contained"
-             onPress={() => console.log('Pressed')}>
-                Donate now
             
-            </Button></View>
         </SafeArea>
     )
 }
@@ -38,22 +25,5 @@ const styles = StyleSheet.create({
       borderBottomWidth:2,
       borderBottomColor:'green'
     },
-    pic:{
-        height:250,
-        width:250,
-        alignItems:'center'
-    },
-    text:{
-        marginTop:20,
-        fontSize:17,
-        color:'green'
-       
-    },
-    vat:{
-        marginTop:10
-    },
-    button:{
-        marginTop:20,
-        width:200
-    }
+   
 })

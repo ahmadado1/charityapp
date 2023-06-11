@@ -1,14 +1,15 @@
+import { useState,useEffect,useCallback,useContext } from "react";
+import { AppContext } from "../Settings/globalVariables";
 import { View,TouchableOpacity,Text,StyleSheet,Alert} from "react-native";
 import { SafeArea } from "../component/SafeArea";
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { Pacifico_400Regular } from "@expo-google-fonts/pacifico";
-import { useState,useEffect,useCallback } from "react";
 import { TextInput,Button } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { auth } from "../Settings/Firebase.setting";
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword,onAuthStateChanged } from 'firebase/auth';
 
 const validationRules = yup.object({
   email:yup.string().required('you must fill this field').min(5).max(36),
@@ -18,6 +19,7 @@ const validationRules = yup.object({
 });
 
 export function Signup ({navigation}) {
+  const {setUid} = useContext(AppContext);
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -52,13 +54,32 @@ return(
       <Text style={style.title2}>Create a donator account</Text>
       
       <Formik
-        initialValues={{ email: '',password:'',passwordConfirmation:'' }}
+        initialValues={{ email: '',password:'', }}
         onSubmit={(values,action) => {
           createUserWithEmailAndPassword(auth,values.email,values.password)
-          .then(() => {
-            Alert.alert('Notify','Account creation succesfull',
-            [{text:'Go to Home',onPress:() => navigation.navigate('My Home')}])
-          }).catch(error => console.log(error)) 
+          .then(() => onAuthStateChanged(auth,(user) => {
+            setUid(user.uid);
+            Alert.alert('Message','Your account was created',[
+              {text:'Go to Home',onPress:() => navigation.navigate('My Home')}
+            ])
+          }))
+          .catch((error) => {
+            //custom action for defferent errors
+            if (error.code == 'auth/invalid-email'){
+              Alert.alert('Message','Invalid email! ',[
+                {text:'Try again',},
+              ])
+            }else if (error.code == 'auth/email-already-in-use'){
+              Alert.alert('Message','Account allready exist with the same email',[
+                {text:'Go to Login',onPress:() => navigation.navigate('Login')},
+                {text:'Forgot Password',onPress:() => navigation.navigate('Reset Password')}
+              ])
+            }else{
+              Alert.alert('Message','Something went wrong ',[
+                {text:'Try again',},
+              ])
+            }
+          }) 
         }}
         validationSchema={validationRules}
       >
@@ -66,6 +87,7 @@ return(
             <View>
               <View>
                 <TextInput
+                outlineColor="black"
                   mode="outlined"
                   label='email'
                   style={style.input}

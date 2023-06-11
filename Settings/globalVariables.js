@@ -3,12 +3,12 @@ import { createContext,useState } from "react";
 const AppContext = createContext();
 
 function AppProvider ({children}) {
-  const [firstName, setFirstName] = useState('')
-  const [uid, setUid] = useState('fdggab')
+  const [userNames, setuserNames] = useState({fName:null,lName:null})
+  const [uid, setUid] = useState(undefined)
 
     return(
         <AppContext.Provider
-        value={{firstName,setFirstName,uid,setUid}}>
+        value={{userNames,setuserNames,uid,setUid}}>
             {children}
         </AppContext.Provider>
     )

@@ -71,10 +71,12 @@ function Home ({navigation}) {
             
          
 
-          <FontAwesomeIcon icon={faUser}
+         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+         <FontAwesomeIcon icon={faUser}
            color='#5C469C' size={30}/>
+        
+         </TouchableOpacity>
         </View>
-
         <View style={styles.body}>
           <View style={styles.actionBlock}>
             <TouchableOpacity style={styles.actionBox}>
@@ -153,9 +155,10 @@ export function MyHome({navigation}){
                   tabBarInactiveTintColor: 'gray',
                 })}
               >
-            <Tab.Screen name="Home" component={Home} options={{headerShown:false}}/>
+          <Tab.Screen name="Home" component={Home} options={{headerShown:false}}/>
           <Tab.Screen name="Donate" component={Donate} options={{headerShown:false}}/>
           <Tab.Screen name="About" component={About} options={{headerShown:false}}/>
+          
       </Tab.Navigator>
     )
   }
