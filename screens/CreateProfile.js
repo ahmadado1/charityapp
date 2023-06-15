@@ -5,6 +5,7 @@ import { SafeArea } from "../component/SafeArea";
 import { TextInput,Button } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+
 import { db } from '../Settings/Firebase.setting';
 import { setDoc,doc } from "firebase/firestore";
 
